@@ -5,7 +5,10 @@ This package provides request transformation between REST &lt;-&gt; gRPC with [O
 ## Motivation
 
 Nginx supports `grpc-web` proxy since version 1.13.0, and Openresty 1.5.8.1rc1 uses Nginx core 1.15.8.
-But it cannot proxy as REST interface, so we'd like to support it with minimum Lua script support.
+
+But it cannot proxy with REST interface, so we'd like to support it with minimum Lua script support like [grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway).
+
+This just work for simple gateway, so you don't bound by golang. You can choose gRPC backend which built with any language!
 
 ## Requirement
 
@@ -19,14 +22,16 @@ You can install via `luarocks`.
 luarocks install lua-resty-grpc-gateway
 ```
 
-## Usage
-
-### Important
+## Important
 
 Note that nginx grpc gateway accepts only `grpcweb` mode, not `grpcwebtext`.
 So make sure protobuf file is compiled with `--grpc-web_out=import_style=xxx,mode=grpcweb:$OUT_DIR`.
 
----
+## Usage for simple grpc-web gateway
+
+This is same as nginx's example. see [nginx documentration](https://www.nginx.com/blog/nginx-1-13-10-grpc/)
+
+## Usage for REST to gRPC
 
 In order to trasnform from REST to gRPC completely, need to use three hook points:
 
