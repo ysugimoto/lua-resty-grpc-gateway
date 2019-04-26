@@ -31,14 +31,14 @@ So make sure protobuf file is compiled with `--grpc-web_out=import_style=xxx,mod
 
 ## Usage for simple grpc-web gateway
 
-This is same as nginx's example. see [nginx documentration](https://www.nginx.com/blog/nginx-1-13-10-grpc/)
+This is same as nginx's example. see [nginx documentation](https://www.nginx.com/blog/nginx-1-13-10-grpc/)
 
 ## Usage for REST to gRPC
 
-In order to trasnform from REST to gRPC completely, need to use three hook points:
+In order to trasnform from REST to gRPC completely, you need to use three of hook points:
 
-- `access_by_lua_*` for transform REST to gRPC request format
-- `body_filter_by_lua_* ` for transform from gRPC binary response to JSON format
+- `access_by_lua_*` to transform REST to gRPC request format
+- `body_filter_by_lua_* ` to transform from gRPC binary response to JSON format
 - `header_filter_by_lua_*` add `Content-Type: application/json` response header
 
 Following code is full of examples:
@@ -117,13 +117,11 @@ message HelloReply {
 }
 ```
 
-See completely [example](https://github.com/ysugimoto/lua-resty-grpc-gateway/tree/master/example) for actual working.
+See complete [example](https://github.com/ysugimoto/lua-resty-grpc-gateway/tree/master/example) for actual working.
 
-## Reqeust transforming
+## Request transforming
 
-This REST to gRPC request transformation supports any request methods.
-
-This means gRPC message is built from:
+REST to gRPC request transformation supports any request methods, it means gRPC message is built from either of:
 
 - `GET`: use query string
 - `POST`: use post fields
@@ -137,7 +135,7 @@ message HelloRequest {
 }
 ```
 
-For above message structure, `name` field will be assigned by either way:
+For above message structure, `name` field will be assigned by either of following way:
 
 ```
 GET /?name=example
