@@ -39,3 +39,10 @@ luac.out
 *.x86_64
 *.hex
 
+example/grpc-gateway
+example/server/app
+example/server/src
+example/server/pkg
+example/client/node_modules
+example/client/helloworld
+example/client/dist
