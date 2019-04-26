@@ -43,7 +43,7 @@ Following code is full of examples:
 
 ### nginx.conf
 
-```nginx configuration file
+```lua
 server {
   listen 80;
   server_name localhost;
