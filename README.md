@@ -10,6 +10,8 @@ But it cannot proxy with REST interface, so we'd like to support it with minimum
 
 This just work for simple gateway, so you don't bound by golang. You can choose gRPC backend which built with any language!
 
+For grpc-web detail, see [grpc-web Repository](https://github.com/grpc/grpc-web).
+
 ## Requirement
 
 - Openresty 1.15.8.1rc1 or later
@@ -116,6 +118,50 @@ message HelloReply {
 ```
 
 See completely [example](https://github.com/ysugimoto/lua-resty-grpc-gateway/tree/master/example) for actual working.
+
+## Reqeust transforming
+
+This REST to gRPC request transformation supports any request methods.
+
+This means gRPC message is built from:
+
+- `GET`: use query string
+- `POST`: use post fields
+- `JSON POST`: use decoded JSON request body
+
+For instance:
+
+```
+message HelloRequest {
+  string name = 1;
+}
+```
+
+For above message structure, `name` field will be assigned by either way:
+
+```
+GET /?name=example
+```
+
+```
+POST /
+
+name=example
+```
+
+```
+POST /
+Content-Type: application/json
+
+{"name":"example"}
+```
+
+You *DO NOT* specify all fields as empty, otherwise gateway will respond error.
+
+```
+GET /
+>> error
+```
 
 ## License
 
