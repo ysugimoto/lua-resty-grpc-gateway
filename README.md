@@ -121,7 +121,31 @@ See complete [example](https://github.com/ysugimoto/lua-resty-grpc-gateway/tree/
 
 ## Request transforming
 
-REST to gRPC request transformation supports any request methods, it means gRPC message is built from either of:
+```lua
+-- load protobuf wrapper and request transformer
+local proto = require("grpc-gateway.proto")
+local request = require("grpc-gateway.request")
+
+-- First, instantiate protobuf wrapper with destination pb file
+local p, err = proto.new("/path/to/proto.file")
+if err then
+  print(err) -- err is not null if file not found or something
+end
+
+-- Second, instatiate request with protobuf instance
+local r = request.new(p)
+
+-- Third, call transform() method. transform() method arguments are:
+--   first argument is service name (contains package name if you defined)
+--   second argument is RPC method name
+-- In this case, package will transform to helloworld.Greeter/SayHello request format of HelloRequest
+err = r:transform("helloworld.Greeter", "SayHello")
+if err then
+  print(err) -- err is not null if failed to transform request
+end
+```
+
+REST to gRPC request transformation supports `GET` and `POST` request methods, it means gRPC message is built from either of:
 
 - `GET`: use query string
 - `POST`: use post fields
@@ -160,6 +184,44 @@ You *DO NOT* specify all fields as empty, otherwise gateway will respond error.
 GET /
 >> error
 ```
+
+## Response transforming
+
+```lua
+-- load protobuf wrapper and response transformer
+local proto = require("grpc-gateway.proto")
+local response = require("grpc-gateway.response")
+
+-- First, instantiate protobuf wrapper with destination pb file
+local p, err = proto.new("/path/to/proto.file")
+if err then
+  print(err) -- err is not null if file not found or something
+end
+
+-- Second, instatiate response with protobuf instance
+local r = response.new(p)
+
+-- Third, call transform() method as same as request:
+--   first argument is service name (contains package name if you defined)
+--   second argument is RPC method name
+-- In this case, package will transform to helloworld.Greeter/SayHello response format of HelloReply
+err = r:transform("helloworld.Greeter", "SayHello")
+if err then
+  print(err) -- err is not null if failed to transform response
+end
+```
+
+And, to pass a request to gRPC backend, nginx need to set `Content-Type` as `application/grpc`, then this header will be kept to REST response.
+
+To avoid it, you need to swap this header on `header_filter_by_lua_*` phase:
+
+```lua
+header_filter_by_lua_block {
+  ngx.header["Content-Type"] = "application/json"
+}
+```
+
+Otherwise, REST HTTP response's `Content-Type` becomes `application/grpc`. Sometimes it's a bad way of process response (e.g. show download dialog on browser)
 
 ## License
 
