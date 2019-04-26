@@ -27,6 +27,8 @@ The gateway container run on `:9000`, and you cannot access to backend app witho
 
 ### Run client server
 
+Client uses simple grpc-web interface.
+
 ```
 cd client
 yarn install
@@ -35,3 +37,14 @@ yarn start
 
 The client app will start on `:8080`, and will open browser automatically.
 If grpc-web request sent successfully (maybe it's not due to browser implementation), you can see `Hello, grpc-web with gateway!` message in content.
+
+### Get gRPC response via REST interface
+
+gateway container also accepts REST interface:
+
+```
+curl "http://localhost:9000/rest?name=grpc-rest"
+>> {"message":"Hello, grpc-rest!"}
+```
+
+This response is made through the gateway as REST, proxy to backend with gRPC request, and transform to JSON.
