@@ -10,6 +10,10 @@ description = {
    maintainer = "ysugimoto",
    summary = "Libray for transforming REST to gPRC request on Openresty"
 }
+dependencies = {
+  "lua >= 5.1",
+  "lua-protobuf"
+}
 build = {
    type = "builtin",
    modules = {
