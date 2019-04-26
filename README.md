@@ -221,6 +221,15 @@ header_filter_by_lua_block {
 
 Otherwise, REST HTTP response's `Content-Type` becomes `application/grpc`. Normally it's a bad way of process response (e.g. show download dialog on browser)
 
+## CORS support
+
+This package includes sending CORS headers for grpc-web request from other origin.
+
+```
+local cors = require("grpc-gateway.cors")
+cors("http://localhost:8080") -- or cors() to set "*"
+```
+
 ## License
 
 MIT
