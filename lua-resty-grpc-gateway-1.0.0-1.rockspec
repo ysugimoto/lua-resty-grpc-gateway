@@ -20,6 +20,7 @@ build = {
       ["grpc-gateway.proto"] = "lib/proto.lua",
       ["grpc-gateway.request"] = "lib/request.lua",
       ["grpc-gateway.response"] = "lib/response.lua",
-      ["grpc-gateway.util"] = "lib/util.lua"
+      ["grpc-gateway.util"] = "lib/util.lua",
+      ["grpc-gateway.cors"] = "lib/cors.lua"
    }
 }

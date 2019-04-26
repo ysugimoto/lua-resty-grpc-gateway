@@ -4,6 +4,13 @@ local util = require("grpc-gateway.util")
 
 local _M = {}
 
+-- grpc-gateway.response is used for convering from gRPC binary response to JSON body.
+-- The response transforming steps are:
+--   1. Read all response body from gPRC backend
+--   2. Decode from specified service method to Lua table
+--   3. Encode to JSON
+--
+-- This module shoud be used on `body_filter_by_lua_*` phase
 _M.new = function(proto)
   local instance = {}
   instance.transform = function(self, service, method)

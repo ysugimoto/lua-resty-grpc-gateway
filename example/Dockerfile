@@ -6,4 +6,4 @@ RUN apt-get update -qq && \
 RUN mkdir -p /var/log/nginx
 RUN mkdir /etc/proto
 COPY ./helloworld.proto /etc/proto/helloworld.proto
-RUN luarocks install lua-protobuf
+RUN luarocks install lua-resty-grpc-gateway
