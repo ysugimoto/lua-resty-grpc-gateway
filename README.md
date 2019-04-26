@@ -41,8 +41,6 @@ In order to trasnform from REST to gRPC completely, you need to use three of hoo
 - `body_filter_by_lua_* ` to transform from gRPC binary response to JSON format
 - `header_filter_by_lua_*` add `Content-Type: application/json` response header
 
-Following code is full of examples:
-
 ### nginx.conf
 
 ```lua
@@ -221,7 +219,7 @@ header_filter_by_lua_block {
 }
 ```
 
-Otherwise, REST HTTP response's `Content-Type` becomes `application/grpc`. Sometimes it's a bad way of process response (e.g. show download dialog on browser)
+Otherwise, REST HTTP response's `Content-Type` becomes `application/grpc`. Normally it's a bad way of process response (e.g. show download dialog on browser)
 
 ## License
 
