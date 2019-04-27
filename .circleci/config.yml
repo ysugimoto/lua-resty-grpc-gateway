@@ -17,9 +17,9 @@ jobs:
       - run:
           command: |
             VERSION=$(echo $CIRCLE_TAG | cut -c1-20)
-            sed -i "s/<TAG>/$VERSION/g" ./lua-resty-gateway.rockspec
-            luarocks pack lua-resty-gateway.rockspec
-            luarocks upload lua-resty-gateway.rockspec --api-key=$LUAROCKS_API_KEY
+            sed -i "s/<TAG>/$VERSION/g" ./lua-resty-grpc-gateway.rockspec
+            luarocks pack lua-resty-grpc-gateway.rockspec
+            luarocks upload lua-resty-grpc-gateway.rockspec --api-key=$LUAROCKS_API_KEY
 
 workflows:
   version: 2
