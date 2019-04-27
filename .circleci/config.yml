@@ -14,6 +14,7 @@ jobs:
       - image: superpaintman/lua:5.1-luarocks
     steps:
       - checkout
+      - run: apt-get install zip
       - run:
           command: |
             VERSION=$(echo $CIRCLE_TAG | cut -c2-20)
