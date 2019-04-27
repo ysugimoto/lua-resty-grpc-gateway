@@ -16,7 +16,7 @@ jobs:
       - checkout
       - run:
           command: |
-            VERSION=$(echo $CIRCLE_TAG | cut -c1-20)
+            VERSION=$(echo $CIRCLE_TAG | cut -c2-20)
             cp ./lua-resty-grpc-gateway.rockspec ./lua-resty-grpc-gateway-${VERSION}-1.rockspec
             sed -i "s/<TAG>/$VERSION/g" ./lua-resty-grpc-gateway-${VERSION}-1.rockspec
             luarocks pack lua-resty-grpc-gateway-${VERSION}-1.rockspec
