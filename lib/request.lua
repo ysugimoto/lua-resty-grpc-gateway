@@ -14,7 +14,7 @@ local _M = {}
 -- This module shoud be used on `access_by_lua_*` phase
 _M.new = function(proto)
   local instance = {}
-  instance.transform = function(self, service, method)
+  instance.transform = function(self, service, method, default_values)
     -- Find service method from loaded proto definitions
     local m = util.find_method(proto, service, method)
     if not m then
@@ -24,7 +24,7 @@ _M.new = function(proto)
     -- Ensure erquest body has been read
     ngx.req.read_body()
     -- Build request binary as method input type from request data (query string, post body, or JSON body)
-    local encoded = pb.encode(m.input_type, util.map_message(m.input_type))
+    local encoded = pb.encode(m.input_type, util.map_message(m.input_type, default_values or {}))
     local size = string.len(encoded)
     -- Prepend gRPC specific prefix data
     -- request is compressed (always 0)

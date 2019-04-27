@@ -1,4 +1,8 @@
 local pb = require("pb")
+local json
+if not os.getenv("LUAUNIT") then
+  json = require("cjson")
+end
 
 local _M = {}
 
@@ -45,18 +49,18 @@ local function get_from_request(name, kind)
   end
   local prefix = kind:sub(1, 3)
   if prefix == "str" then
-    return request_table[name] or ""
+    return request_table[name] or nul
   elseif prefix == "int" then
     if request_table[name] then
       return tonumber(request_table[name])
     else
-      return 0
+      return nil
     end
   end
   return nil
 end
 
-_M.map_message = function(field)
+_M.map_message = function(field, default_values)
   if not pb.type(field) then
     return nil, ("Field %s is not defined"):format(field)
   end
@@ -64,13 +68,13 @@ _M.map_message = function(field)
   local request = {}
   for name, _, field_type in pb.fields(field) do
     if field_type:sub(1, 1) == "." then
-      sub, err = map_message(field_type, request)
+      sub, err = _M.map_message(field_type, default_values)
       if err then
         return nil, err
       end
       request[name] = sub
     else
-      request[name] = get_from_request(name, field_type)
+      request[name] = get_from_request(name, field_type) or default_values[name] or nil
     end
   end
   return request, nil
