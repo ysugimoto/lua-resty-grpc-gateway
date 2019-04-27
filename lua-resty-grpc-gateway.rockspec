@@ -17,10 +17,10 @@ dependencies = {
 build = {
    type = "builtin",
    modules = {
-      ["grpc-gateway.proto"] = "lib/proto.lua",
-      ["grpc-gateway.request"] = "lib/request.lua",
-      ["grpc-gateway.response"] = "lib/response.lua",
-      ["grpc-gateway.util"] = "lib/util.lua",
-      ["grpc-gateway.cors"] = "lib/cors.lua"
+      ["grpc-gateway.proto"] = "grpc-gateway/proto.lua",
+      ["grpc-gateway.request"] = "grpc-gateway/request.lua",
+      ["grpc-gateway.response"] = "grpc-gateway/response.lua",
+      ["grpc-gateway.util"] = "grpc-gateway/util.lua",
+      ["grpc-gateway.cors"] = "grpc-gateway/cors.lua"
    }
 }
