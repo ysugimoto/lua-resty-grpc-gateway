@@ -1,7 +1,7 @@
 package = "lua-resty-grpc-gateway"
 version = "<TAG>-1"
 source = {
-   url = "git://git@github.com/ysugimoto/lua-resty-grpc-gateway.git",
+   url = "git://github.com/ysugimoto/lua-resty-grpc-gateway.git",
    tag = "v<TAG>"
 }
 description = {
