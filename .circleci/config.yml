@@ -6,6 +6,7 @@ jobs:
     steps:
       - checkout
       - run: luarocks install luaunit
+      - run: luarocks install lua-protobuf
       - run: make test
 
   publish:
