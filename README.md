@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/ysugimoto/lua-resty-grpc-gateway.svg?style=svg)](https://circleci.com/gh/ysugimoto/lua-resty-grpc-gateway)
+
 # lua-resty-grpc-gateway
 
 This package provides request transformation between REST &lt;-&gt; gRPC with [Openresty](https://openresty.org/).
