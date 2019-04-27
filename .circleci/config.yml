@@ -13,7 +13,7 @@ jobs:
     docker:
       - image: superpaintman/lua:5.1-luarocks
     steps:
-      - setup_remote_docker
+      - checkout
       - run:
           command: |
             VERSION=$(echo $CIRCLE_TAG | cut -c1-20)
