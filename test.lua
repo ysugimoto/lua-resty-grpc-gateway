@@ -1,9 +1,9 @@
 package.path = package.path .. ";./?.lua"
 
 local lu = require("luaunit")
-local util = require("lib.util")
+local util = require("grpc-gateway.util")
 local mock = require("fixtures.ngx_mock")
-local proto = require("lib.proto")
+local proto = require("grpc-gateway.proto")
 
 TestUtil = {}
 function TestUtil:testFileExistsShouldTrue()
