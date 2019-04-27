@@ -18,6 +18,7 @@ jobs:
           command: |
             apt-get update || true
             apt-get install -y zip
+            luarocks install dkjson
       - run:
           command: |
             VERSION=$(echo $CIRCLE_TAG | cut -c2-20)
