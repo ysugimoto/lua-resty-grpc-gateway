@@ -21,6 +21,7 @@ build = {
       ["grpc-gateway.request"] = "grpc-gateway/request.lua",
       ["grpc-gateway.response"] = "grpc-gateway/response.lua",
       ["grpc-gateway.util"] = "grpc-gateway/util.lua",
-      ["grpc-gateway.cors"] = "grpc-gateway/cors.lua"
+      ["grpc-gateway.cors"] = "grpc-gateway/cors.lua",
+      ["grpc-gateway.polyfill"] = "grpc-gateway/polyfill.lua"
    }
 }

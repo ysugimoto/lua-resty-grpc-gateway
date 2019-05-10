@@ -232,6 +232,25 @@ local cors = require("grpc-gateway.cors")
 cors("http://localhost:8080") -- or cors() to set "*"
 ```
 
+## Polyfill grpc-web-text mode
+
+In default, nginx can proxy only `application/grpc-web+proto` which means request body will come as binary,
+So nginx cannot support `application/grpc-web-text` mode because rquest body will come as base64-encoded string.
+
+So this package also provide a tiny polyfill:
+
+```lua
+location / {
+  access_by_lua_block {
+    local polyfill = require("grpc-gateway.polyfill")
+    polyfill()
+  }
+
+  grpc_pass localhost:9000;
+}
+```
+
+
 ## License
 
 MIT
