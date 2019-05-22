@@ -29,7 +29,11 @@ luarocks install lua-resty-grpc-gateway
 ## Important
 
 Note that nginx grpc gateway accepts only `grpcweb` mode, not `grpcwebtext`.
-So make sure protobuf file is compiled with `--grpc-web_out=import_style=xxx,mode=grpcweb:$OUT_DIR`.
+So usually you should compile protobuf with `--grpc-web_out=import_style=xxx,mode=grpcweb:$OUT_DIR`.
+
+But this package also support `grpcwebtext` mode :v: If you want to use this mode, use polyfill.
+
+See [polyfill-grpc-web-text-mode](https://github.com/ysugimoto/lua-resty-grpc-gateway#polyfill-grpc-web-text-mode) section.
 
 ## Usage for simple grpc-web gateway
 
