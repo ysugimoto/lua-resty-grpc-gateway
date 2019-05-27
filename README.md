@@ -41,7 +41,7 @@ This is same as nginx's example. see [nginx documentation](https://www.nginx.com
 
 ## Usage for REST to gRPC
 
-In order to trasnform from REST to gRPC completely, you need to use three of hook points:
+In order to transform from REST to gRPC completely, you need to use three of hook points:
 
 - `access_by_lua_*` to transform REST to gRPC request format
 - `body_filter_by_lua_* ` to transform from gRPC binary response to JSON format
@@ -68,7 +68,7 @@ server {
       local req = grequest.new(p)
       err = req:transform("helloworld.Greeter", "SayHello")
       if err then
-        ngx.log(ngx.ERR, ("trasnform request error: %s"):format(err))
+        ngx.log(ngx.ERR, ("transform request error: %s"):format(err))
         return
       end
     }
@@ -85,7 +85,7 @@ server {
       local resp = gresponse.new(p)
       err = resp:transform("helloworld.Greeter", "SayHello")
       if err then
-        ngx.log(ngx.ERR, ("trasnform request error: %s"):format(err))
+        ngx.log(ngx.ERR, ("transform response error: %s"):format(err))
         return
       end
     }
