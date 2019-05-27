@@ -238,10 +238,10 @@ cors("http://localhost:8080") -- or cors() to set "*"
 
 ## Polyfill grpc-web-text mode
 
-When you you compiled protobuf with `--grpc-web_out=import_style=xxx,mode=grpcwebtext:$OUT_DIR`, grpc-web will reqeust as grpc-web-text mode.
+When you compiled protobuf with `--grpc-web_out=import_style=xxx,mode=grpcwebtext:$OUT_DIR`, grpc-web will reqeust as grpc-web-text mode.
 
 In default, nginx can proxy only `application/grpc-web+proto` which means request body will come as binary,
-nginx cannot support `application/grpc-web-text` Content-Type because request body will come as base64-encoded string, then it cannot decode in nginx itself.
+but nginx cannot proxy `application/grpc-web-text` Content-Type because request body will come as base64-encoded string, then it cannot decode in nginx itself.
 
 So this package also provide a tiny polyfill:
 
