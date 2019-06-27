@@ -11,6 +11,6 @@ return function()
       ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
       return
     end
-    nex.req.set_body_data(decoded)
+    ngx.req.set_body_data(decoded)
   end
 end
