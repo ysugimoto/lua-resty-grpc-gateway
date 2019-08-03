@@ -26,16 +26,16 @@ You can install via `luarocks`.
 luarocks install lua-resty-grpc-gateway
 ```
 
-## Important
+## Important for gRPC-Web proxy
 
 Note that nginx grpc gateway accepts only `grpcweb` mode, not `grpcwebtext`.
 So usually you should compile protobuf with `--grpc-web_out=import_style=xxx,mode=grpcweb:$OUT_DIR`.
 
-But this package also support `grpcwebtext` mode :v: If you want to use this mode, use polyfill.
+But this package also support `grpcwebtext` mode for simply using gRPC-Web proxy :v: If you want to use this mode, use polyfill.
 
 See [polyfill-grpc-web-text-mode](https://github.com/ysugimoto/lua-resty-grpc-gateway#polyfill-grpc-web-text-mode) section.
 
-## Usage for simple grpc-web gateway
+## Usage for simple gRPC-Web gateway
 
 This is same as nginx's example. see [nginx documentation](https://www.nginx.com/blog/nginx-1-13-10-grpc/)
 
@@ -50,6 +50,13 @@ In order to transform from REST to gRPC completely, you need to use three of hoo
 ### nginx.conf
 
 ```lua
+## 0. prepare proto file import_paths
+init_by_lua_block {
+  PROTOC_IMPORT_PATHS = {
+    "/usr/local/include"
+  }
+}
+
 server {
   listen 80;
   server_name localhost;
@@ -226,6 +233,65 @@ header_filter_by_lua_block {
 ```
 
 Otherwise, REST HTTP response's `Content-Type` becomes `application/grpc`. Normally it's a bad way of process response (e.g. show download dialog on browser)
+
+## Import paths
+
+One of important thing, in this package, you should define `import_paths` which is set when load exteral/additional proto files in your proto file.
+
+For instance:
+
+```protobuf
+syntax = "proto3";
+
+package helloworld;
+
+// import dependent proto file
+import "google/protobuf/timestamp.proto";
+
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloReply {
+  string message = 1;
+  // message which defiened at imported package
+  google.protobuf.Timestamp reply_at = 2;
+}
+```
+
+import `google/protobuf/timestamp.proto` and use `google.protobuf.Timestamp` message struct on above. Then, you need to defined import_path by following ways:
+
+#### define `PROTOC_IMPORT_PATHS` as global table
+
+This package will use if `PROTOC_IMPORT_PATHS` variable is declared as global. we recommend that `init_by_lua_block` is good for you.
+
+```lua
+init_by_lua_block {
+  PROTOC_IMPORT_PATHS = {
+    "/usr/local/include",
+    ...
+  }
+}
+```
+
+#### pass extra import_path to `protoc.new`
+
+If you add more import_paths for specific package or temporarily, you can pass second or after argument on `protoc.new`.
+
+```lua
+local p = protoc.new("/etc/proto/helloworld.proto", "/usr/local/include", ...)
+...
+```
+
+These two cases will works fine. imported packages resolved automatically by following import_paths. [Example](https://github.com/ysugimoto/lua-resty-grpc-gateway/tree/master/example) also uses import statment, please check it.
+
+
+
+```protobuf
 
 ## CORS support
 

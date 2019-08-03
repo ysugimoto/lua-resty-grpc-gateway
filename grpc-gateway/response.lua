@@ -19,16 +19,25 @@ _M.new = function(proto)
       return ("Undefined service method: %s/%s"):format(service, method)
     end
 
-    local buffer = ngx.ctx.response_buffer or ""
-    buffer = buffer .. ngx.arg[1]
-    if ngx.arg[2] then
-      local decoded = pb.decode(m.output_type, buffer)
+    local chunk, eof = ngx.arg[1], ngx.arg[2]
+    local buffered = ngx.ctx.buffered
+    if not buffered then
+      buffered = {}
+      ngx.ctx.buffered = buffered
+    end
+    if chunk ~= "" then
+      buffered[#buffered + 1] = chunk
+      ngx.arg[1] = nil
+    end
+
+    if eof then
+      ngx.ctx.buffered = nil
+      local buffer = table.concat(buffered)
+      -- Important:
+      -- Strip first 5 bytes from response body to make sure pb.decode() works correctly
+      local decoded = pb.decode(m.output_type, string.sub(buffer, 6))
       local response = json.encode(decoded)
       ngx.arg[1] = response
-    else
-      -- buffering
-      ngx.ctx.response_buffer = buffer
-      ngx.arg[1] = ""
     end
   end
 
