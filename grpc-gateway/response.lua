@@ -35,7 +35,12 @@ _M.new = function(proto)
       local buffer = table.concat(buffered)
       -- Important:
       -- Strip first 5 bytes from response body to make sure pb.decode() works correctly
-      local decoded = pb.decode(m.output_type, string.sub(buffer, 6))
+      -- But if request comes from gRPC-Web, this bytes are necessary for client...
+      if not ngx.req.get_headers["X-Grpc-Web"] then
+        buffer = string.sub(buffer, 6)
+      end
+
+      local decoded = pb.decode(m.output_type, buffer)
       local response = json.encode(decoded)
       ngx.arg[1] = response
     end
