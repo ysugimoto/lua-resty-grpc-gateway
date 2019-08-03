@@ -3,6 +3,8 @@ services:
 
   server:
     build: ./server/
+    ports:
+      - "50100:50001"
     networks:
       grpc-gateway:
         aliases:
