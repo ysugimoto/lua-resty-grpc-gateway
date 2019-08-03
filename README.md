@@ -289,10 +289,6 @@ local p = protoc.new("/etc/proto/helloworld.proto", "/usr/local/include", ...)
 
 These two cases will works fine. imported packages resolved automatically by following import_paths. [Example](https://github.com/ysugimoto/lua-resty-grpc-gateway/tree/master/example) also uses import statment, please check it.
 
-
-
-```protobuf
-
 ## CORS support
 
 This package includes sending CORS headers for grpc-web request from other origin.
