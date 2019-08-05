@@ -36,7 +36,7 @@ _M.new = function(proto)
       -- Important:
       -- Strip first 5 bytes from response body to make sure pb.decode() works correctly
       -- But if request comes from gRPC-Web, this bytes are necessary for client...
-      if not ngx.req.get_headers["X-Grpc-Web"] then
+      if not ngx.req.get_headers()["X-Grpc-Web"] then
         buffer = string.sub(buffer, 6)
       end
 
