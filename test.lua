@@ -29,7 +29,7 @@ function TestUtil:testFindMethodShouldNil()
 end
 
 function TestUtil:testMapMessageWithQueryString()
-  ngx = mock("GET", { name = "foo", age = "100" })
+  ngx = mock("GET", { name = "foo", age = "100", bar = { grades = {1,2,3}} })
   local p, err = proto.new("./fixtures/helloworld.proto")
   lu.assertNil(err)
   local params = util.map_message("helloworld.HelloRequest", {})
@@ -43,19 +43,21 @@ function TestUtil:testMapMessageWithGETDefaultValue()
   lu.assertNil(err)
   local params = util.map_message("helloworld.HelloRequest", {
     name = "foobar",
-    jobs = { "jobA", "jobB" }
+    jobs = { "jobA", "jobB" },
+    bar = { grades = {1,2,3}}
   })
   lu.assertEquals(params.name, "foobar")
   lu.assertEquals(2, #params.jobs)
 end
 function TestUtil:testMapMessageWithPostFields()
-  ngx = mock("POST", {}, { name = "foo", age = "100" })
+  ngx = mock("POST", {}, { name = "foo", age = "100", bar = {{grades = {1,2,3}},{grades={4,5,6}}} })
   local p, err = proto.new("./fixtures/helloworld.proto")
   lu.assertNil(err)
   local params = util.map_message("helloworld.HelloRequest", {})
   lu.assertEquals(params.name, "foo")
   lu.assertEquals(params.age, 100)
   lu.assertNil(params.jobs)
+  lu.assertEquals(params.bar, {{grades={1, 2, 3}}, {grades={4, 5, 6}}})
 end
 function TestUtil:testMapMessageWithPOSTDefaultValue()
   ngx = mock("POST")
@@ -63,10 +65,12 @@ function TestUtil:testMapMessageWithPOSTDefaultValue()
   lu.assertNil(err)
   local params = util.map_message("helloworld.HelloRequest", {
     name = "foobar",
-    jobs = { "jobA", "jobB" }
+    jobs = { "jobA", "jobB" },
+    bar = {{grades = {1,2,3}}}
   })
   lu.assertEquals(params.name, "foobar")
   lu.assertEquals(2, #params.jobs)
+  lu.assertEquals(1, #params.bar)
 end
 
 

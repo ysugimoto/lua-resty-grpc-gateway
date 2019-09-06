@@ -10,6 +10,17 @@ service Greeter {
 
 message HelloRequest {
   string name = 1;
+  repeated ComplexMsg ex = 2; /** Example of nested message type**/
+  repeated string jobs = 3;
+}
+
+message ComplexMsg {
+  string displayname = 1;
+  YetAnotherNestedMsg foo = 2;
+}
+
+message YetAnotherNestedMsg {
+  repeated int32 grades = 1;
 }
 
 message HelloReply {
