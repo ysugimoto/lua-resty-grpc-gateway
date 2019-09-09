@@ -3,6 +3,7 @@ local json
 if not os.getenv("LUAUNIT") then
   json = require("cjson")
 end
+local isempty = require "table.isempty"
 
 local _M = {}
 
@@ -66,13 +67,44 @@ _M.map_message = function(field, default_values)
   end
 
   local request = {}
-  for name, _, field_type in pb.fields(field) do
+  for name, _, field_type,_,lbl in pb.fields(field) do
     if field_type:sub(1, 1) == "." then
-      sub, err = _M.map_message(field_type, default_values)
-      if err then
-        return nil, err
+      
+      -- This is a small workaround because the default_values begins as an empty table when a request comes into request.lua 
+      -- Its easier to work with the data, if the default_values was already populated with the inital JSON request. 
+      -- This could be moved completely outside the map_message function because we should only populate this once throughout the lifecycle of the request
+      -- Due to to the recursive calls, We check if the size of the table is empty or 0 in order to populate the data once.
+      if isempty(default_values) then
+        if ngx.req.get_method() == "POST" then
+          if string.find(ngx.req.get_headers()["Content-Type"] or "", "application/json") then
+            default_values = json.decode(ngx.req.get_body_data())
+          else
+            default_values = ngx.req.get_post_args()
+          end
+        else
+          default_values = ngx.req.get_uri_args()
+        end
+        
       end
-      request[name] = sub
+
+      -- If a request contains nested messages and make use of the 'repeated' protobuf label we may have to iterate over each inner element 
+      -- For each pair of key/values in the table we will recurse and set the correct type of the data i.e string or int and construct the lua request table as normal
+      if lbl == "repeated" then
+        request[name] = {}
+        for _,value in ipairs(default_values[name]) do
+         sub, err = _M.map_message(field_type, value)
+         if err then
+           return nil, err
+         end
+         table.insert(request[name],sub)
+       end
+     else
+       sub, err = _M.map_message(field_type, default_values[name])
+       if err then
+         return nil, err
+       end
+       request[name] = sub
+     end
     else
       request[name] = get_from_request(name, field_type) or default_values[name] or nil
     end
