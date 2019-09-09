@@ -74,7 +74,7 @@ _M.map_message = function(field, default_values)
       -- Its easier to work with the data, if the default_values was already populated with the inital JSON request. 
       -- This could be moved completely outside the map_message function because we should only populate this once throughout the lifecycle of the request
       -- Due to to the recursive calls, We check if the size of the table is empty or 0 in order to populate the data once.
-      if isempty(default_values) then
+      if isempty(default_values or {}) then
         if ngx.req.get_method() == "POST" then
           if string.find(ngx.req.get_headers()["Content-Type"] or "", "application/json") then
             default_values = json.decode(ngx.req.get_body_data())

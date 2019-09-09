@@ -7,6 +7,7 @@ jobs:
       - checkout
       - run: luarocks install luaunit
       - run: luarocks install lua-protobuf
+      - run: luarocks install penlight
       - run: make test
 
   publish:

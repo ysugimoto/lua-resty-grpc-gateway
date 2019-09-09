@@ -1,4 +1,5 @@
 package.path = package.path .. ";./?.lua"
+package.path = package.path .. ";./tests/?.lua"
 
 local lu = require("luaunit")
 local util = require("grpc-gateway.util")
