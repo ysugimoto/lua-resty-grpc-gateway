@@ -16,4 +16,3 @@ RUN cd /opt && \
 
 RUN luarocks install lua-resty-grpc-gateway
 RUN luarocks install serpent
-RUN luarocks install penlight
