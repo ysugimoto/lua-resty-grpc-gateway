@@ -325,8 +325,9 @@ By calling `polyfill()` , grpc-web-text mode will be succeed to proxy to backend
 
 MIT
 
-## Author
+## Contributors
 
-Yoshiaki Sugimoto
+- [ysugimoto](https://github.com/ysugimoto)
+- [kgoguevgoget](https://github.com/kgoguevgoget)
 
 
