@@ -91,7 +91,7 @@ _M.map_message = function(field, default_values)
       -- For each pair of key/values in the table we will recurse and set the correct type of the data i.e string or int and construct the lua request table as normal
       if lbl == "repeated" then
         request[name] = {}
-        for _,value in ipairs(default_values[name]) do
+        for _,value in ipairs(default_values[name] or {}) do
          sub, err = _M.map_message(field_type, value)
          if err then
            return nil, err
