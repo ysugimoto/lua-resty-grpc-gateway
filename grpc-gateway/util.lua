@@ -52,6 +52,21 @@ _M.populate_default_values = function()
   return default_values
 end
 
+-- Converts the incomming value based on the protobuf field type
+local function set_value_type(name, kind, request_table)
+  local prefix = kind:sub(1, 3)
+  if prefix == "str" then
+    return request_table[name] or nil
+  elseif prefix == "int" then
+    if request_table[name] then
+      return tonumber(request_table[name])
+    else
+      return nil
+    end
+  end
+  return nil
+end
+
 _M.map_message = function(field, default_values)
   if not pb.type(field) then
     return nil, ("Field %s is not defined"):format(field)
@@ -73,14 +88,14 @@ _M.map_message = function(field, default_values)
          table.insert(request[name],sub)
        end
      else
-       sub, err = _M.map_message(field_type, default_values[name])
+       sub, err = _M.map_message(field_type, default_values[name] or {})
        if err then
          return nil, err
        end
        request[name] = sub
      end
     else
-      request[name] = get_from_request(name, field_type) or default_values[name] or nil
+      request[name] = set_value_type(name,field_type,default_values) or default_values[name]  or nil
     end
   end
   return request, nil
