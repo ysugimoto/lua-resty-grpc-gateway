@@ -23,6 +23,8 @@ _M.new = function(proto)
 
     -- Ensure erquest body has been read
     ngx.req.read_body()
+    -- Create an internal lua table containing the raw userdata which will be used for processing
+    local default_values = util.populate_default_values()
     -- Build request binary as method input type from request data (query string, post body, or JSON body)
     local encoded = pb.encode(m.input_type, util.map_message(m.input_type, default_values or {}))
     local size = string.len(encoded)
