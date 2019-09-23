@@ -11,10 +11,15 @@ message HelloRequest {
   int64 age = 2;
   repeated string jobs = 3;
   repeated Foo bar = 4;
+  repeated Location locations = 5;
 }
 
 message Foo {
   repeated int32 grades = 1;
+}
+
+message Location {
+  string name = 1;
 }
 
 message HelloReply {

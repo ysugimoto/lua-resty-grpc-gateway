@@ -33,13 +33,14 @@ function TestUtil:testMapMessageWithQueryString()
   ngx = mock("GET", { name = "foo", age = "100", bar = { grades = {1,2,3}} })
   local p, err = proto.new("./fixtures/helloworld.proto")
   lu.assertNil(err)
-  local params = util.map_message("helloworld.HelloRequest", {})
+  local values = util.populate_default_values()
+  local params = util.map_message("helloworld.HelloRequest", values)
   lu.assertEquals(params.name, "foo")
   lu.assertEquals(params.age, 100)
   lu.assertNil(params.jobs)
 end
+
 function TestUtil:testMapMessageWithGETDefaultValue()
-  ngx = mock("GET")
   local p, err = proto.new("./fixtures/helloworld.proto")
   lu.assertNil(err)
   local params = util.map_message("helloworld.HelloRequest", {
@@ -50,18 +51,20 @@ function TestUtil:testMapMessageWithGETDefaultValue()
   lu.assertEquals(params.name, "foobar")
   lu.assertEquals(2, #params.jobs)
 end
+
 function TestUtil:testMapMessageWithPostFields()
   ngx = mock("POST", {}, { name = "foo", age = "100", bar = {{grades = {1,2,3}},{grades={4,5,6}}} })
   local p, err = proto.new("./fixtures/helloworld.proto")
   lu.assertNil(err)
-  local params = util.map_message("helloworld.HelloRequest", {})
+  local values = util.populate_default_values()
+  local params = util.map_message("helloworld.HelloRequest", values)
   lu.assertEquals(params.name, "foo")
   lu.assertEquals(params.age, 100)
   lu.assertNil(params.jobs)
   lu.assertEquals(params.bar, {{grades={1, 2, 3}}, {grades={4, 5, 6}}})
 end
+
 function TestUtil:testMapMessageWithPOSTDefaultValue()
-  ngx = mock("POST")
   local p, err = proto.new("./fixtures/helloworld.proto")
   lu.assertNil(err)
   local params = util.map_message("helloworld.HelloRequest", {
@@ -74,5 +77,28 @@ function TestUtil:testMapMessageWithPOSTDefaultValue()
   lu.assertEquals(1, #params.bar)
 end
 
+function TestUtil:testMapMessageWithMissingValue()
+  ngx = mock("POST", {}, { name = "foo", age = "100" })
+  local p, err = proto.new("./fixtures/helloworld.proto")
+  lu.assertNil(err)
+  local values = util.populate_default_values()
+  local params = util.map_message("helloworld.HelloRequest", values)
+  lu.assertEquals(params.name, "foo")
+  lu.assertEquals(params.age, 100)
+  lu.assertEquals(params.bar, {})
+  lu.assertEquals(params.locations, {})
+end
+
+function TestUtil:testMapMessageWithDuplicateFieldKey()
+  ngx = mock("POST", {}, { name = "foo", age = "100", locations = {{name ="test"}} })
+  local p, err = proto.new("./fixtures/helloworld.proto")
+  lu.assertNil(err)
+  local values = util.populate_default_values()
+  local params = util.map_message("helloworld.HelloRequest", values)
+  lu.assertEquals(params.name, "foo")
+  lu.assertEquals(params.age, 100)
+  lu.assertEquals(params.bar, {})
+  lu.assertEquals(params.locations, {{name = "test"}})
+end
 
 os.exit(lu.LuaUnit.run())
