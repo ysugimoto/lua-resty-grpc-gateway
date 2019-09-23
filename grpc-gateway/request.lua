@@ -28,7 +28,7 @@ _M.new = function(proto)
     local size = string.len(encoded)
     -- Prepend gRPC specific prefix data
     -- request is compressed (always 0)
-    -- requesdt body size (4 bytes)
+    -- request body size (4 bytes)
     local prefix = {
       string.char(0),
       string.char(bit.band(bit.rshift(size, 24), 0xFF)),
