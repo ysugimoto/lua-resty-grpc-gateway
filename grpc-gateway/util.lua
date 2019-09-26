@@ -3,7 +3,6 @@ local json
 if not os.getenv("LUAUNIT") then
   json = require("cjson")
 end
-local isempty = require "table.isempty"
 
 local _M = {}
 
@@ -37,20 +36,27 @@ _M.find_method = function(proto, service, method)
   return nil
 end
 
-local function get_from_request(name, kind)
-  local request_table
+-- Responsible for filling the default_values table during the inital request
+-- This should be called only once
+_M.populate_default_values = function()
+  local default_values = {}
   if ngx.req.get_method() == "POST" then
     if string.find(ngx.req.get_headers()["Content-Type"] or "", "application/json") then
-      request_table = json.decode(ngx.req.get_body_data())
+      default_values = json.decode(ngx.req.get_body_data())
     else
-      request_table = ngx.req.get_post_args()
+      default_values = ngx.req.get_post_args()
     end
   else
-    request_table = ngx.req.get_uri_args()
+    default_values = ngx.req.get_uri_args()
   end
+  return default_values
+end
+
+-- Converts the incomming value based on the protobuf field type
+local function set_value_type(name, kind, request_table)
   local prefix = kind:sub(1, 3)
   if prefix == "str" then
-    return request_table[name] or nul
+    return request_table[name] or nil
   elseif prefix == "int" then
     if request_table[name] then
       return tonumber(request_table[name])
@@ -70,23 +76,6 @@ _M.map_message = function(field, default_values)
   for name, _, field_type,_,lbl in pb.fields(field) do
     if field_type:sub(1, 1) == "." then
       
-      -- This is a small workaround because the default_values begins as an empty table when a request comes into request.lua 
-      -- Its easier to work with the data, if the default_values was already populated with the inital JSON request. 
-      -- This could be moved completely outside the map_message function because we should only populate this once throughout the lifecycle of the request
-      -- Due to to the recursive calls, We check if the size of the table is empty or 0 in order to populate the data once.
-      if isempty(default_values or {}) then
-        if ngx.req.get_method() == "POST" then
-          if string.find(ngx.req.get_headers()["Content-Type"] or "", "application/json") then
-            default_values = json.decode(ngx.req.get_body_data())
-          else
-            default_values = ngx.req.get_post_args()
-          end
-        else
-          default_values = ngx.req.get_uri_args()
-        end
-        
-      end
-
       -- If a request contains nested messages and make use of the 'repeated' protobuf label we may have to iterate over each inner element 
       -- For each pair of key/values in the table we will recurse and set the correct type of the data i.e string or int and construct the lua request table as normal
       if lbl == "repeated" then
@@ -99,14 +88,14 @@ _M.map_message = function(field, default_values)
          table.insert(request[name],sub)
        end
      else
-       sub, err = _M.map_message(field_type, default_values[name])
+       sub, err = _M.map_message(field_type, default_values[name] or {})
        if err then
          return nil, err
        end
        request[name] = sub
      end
     else
-      request[name] = get_from_request(name, field_type) or default_values[name] or nil
+      request[name] = set_value_type(name,field_type,default_values) or default_values[name]  or nil
     end
   end
   return request, nil
