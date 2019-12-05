@@ -3,7 +3,7 @@ local json
 if not os.getenv("LUAUNIT") then
   json = require("cjson")
 end
-local inspect = require("inspect")
+
 local _M = {}
 
 _M.file_exists = function(file)
