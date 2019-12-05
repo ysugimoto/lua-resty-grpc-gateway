@@ -8,10 +8,17 @@ service Greeter {
   rpc SayHello (HelloRequest) returns (HelloReply) {}
 }
 
+enum Color {
+  RED = 0;
+  BLUE = 1;
+  GREEN = 2;
+}
+
 message HelloRequest {
-  string name = 1;
+  string displayname = 1;
   repeated ComplexMsg ex = 2; /** Example of nested message type**/
   repeated string jobs = 3;
+  Color color = 4; /**Example of a enum**/
 }
 
 message ComplexMsg {
