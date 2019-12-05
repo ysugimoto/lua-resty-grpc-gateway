@@ -101,4 +101,44 @@ function TestUtil:testMapMessageWithDuplicateFieldKey()
   lu.assertEquals(params.locations, {{name = "test"}})
 end
 
+function TestUtil:testMapMessageWithEnumString()
+  ngx = mock("POST",{},{ name = "foo", age = "100", locations = {{name ="test"}},color = "GREEN" })
+  local p, err = proto.new("./fixtures/enum.proto")
+  lu.assertNil(err)
+  local values = util.populate_default_values()
+  local params = util.map_message("enum.HelloRequest", values)
+  lu.assertEquals(params.name, "foo")
+  lu.assertEquals(params.color,1)
+end
+
+function TestUtil:testMapMessageWithEnumIntQuery()
+  ngx = mock("GET",{ name = "foo", age = "100", locations = {{name ="test"}},color = 2 })
+  local p, err = proto.new("./fixtures/enum.proto")
+  lu.assertNil(err)
+  local values = util.populate_default_values()
+  local params = util.map_message("enum.HelloRequest", values)
+  lu.assertEquals(params.name, "foo")
+  lu.assertEquals(params.color,"BLUE")
+end
+
+function TestUtil:testMapMessageWithEnumStringQuery()
+  ngx = mock("GET",{ name = "foo", age = "100", locations = {{name ="test"}},color = "GREEN" })
+  local p, err = proto.new("./fixtures/enum.proto")
+  lu.assertNil(err)
+  local values = util.populate_default_values()
+  local params = util.map_message("enum.HelloRequest", values)
+  lu.assertEquals(params.name, "foo")
+  lu.assertEquals(params.color,1)
+end
+
+function TestUtil:testMapMessageWithEnumInt()
+  ngx = mock("POST",{},{ name = "foo", age = "100", locations = {{name ="test"}},color = 2 })
+  local p, err = proto.new("./fixtures/enum.proto")
+  lu.assertNil(err)
+  local values = util.populate_default_values()
+  local params = util.map_message("enum.HelloRequest", values)
+  lu.assertEquals(params.name, "foo")
+  lu.assertEquals(params.color,"BLUE")
+end
+
 os.exit(lu.LuaUnit.run())
