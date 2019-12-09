@@ -320,6 +320,224 @@ location / {
 
 By calling `polyfill()` , grpc-web-text mode will be succeed to proxy to backend.
 
+## Supported types and definitions
+
+lua-resty-grpc presently supports the following definitions in a given proto file. Other definitions have not been explicitly tested.
+
+This project follows the canonical encoding from JSON to gRPC see [json-mapping](https://developers.google.com/protocol-buffers/docs/proto3#json) for a guide on how to encode your inputs for use with this plugin.
+
+### Scalar types
+* string
+* int32/64
+
+```protobuf
+syntax = "proto3";
+
+package helloworld;
+
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+message HelloRequest {
+  string name = 1;
+  int64 age = 2;
+}
+```
+
+```
+GET /?name=test&age=30
+```
+
+OR 
+
+```
+POST /
+Content-Type: application/json
+
+{"name":"test","age":30}
+```
+
+### Arrays (repeated label)
+```protobuf
+syntax = "proto3";
+
+package helloworld;
+
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+message HelloRequest {
+  repeated int32 grades =1;
+}
+```
+The corresponding POST request is as follows:
+
+```
+POST /
+Content-Type: application/json
+{"grades":[97,98,99]}
+```
+
+### Nested message types
+
+Since everything in gRPC is built using the `message` construct, naturally we want to be able to define several and then nest them to create more complex messages.
+
+```protobuf
+syntax = "proto3";
+package helloworld;
+
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+message HelloRequest {
+  repeated ComplexMsg ex = 2;
+}
+
+message ComplexMsg {
+  string displayName = 1;
+  YetAnotherNestedMsg foo = 2;
+}
+```
+
+The corresponding POST request is as follows:
+
+```
+POST /
+Content-Type: application/json
+{"ex":[{"displayName":"test", "foo":{"grades":[1,2,3]}}, {"displayName":"test2","foo":{"grades":[97,98,99]}}]}
+```
+
+
+### Enum
+```protobuf
+syntax = "proto3";
+
+enum ColorType {
+    RED = 0;
+    GREEN = 1;
+    BLUE = 2;
+}
+
+message HelloRequest {
+  ColorType color = 1;
+}
+```
+
+Note: you can use either the enumerated value as a `String` or it's equivalent `Int`. For example: `GREEN` or `1`. If you use a value that is not defined by the enum, the lua-resty-grpc package simply ignores it. 
+
+The corresponding GET and POST requests to the gateway using an `enum` is as follows.
+
+```
+GET /?color=GREEN
+```
+
+OR
+
+```
+GET /?color=1
+```
+
+```
+POST /
+Content-Type: application/json
+
+{"color":"BLUE"}
+```
+
+OR
+
+```
+POST /
+Content-Type: application/json
+
+{"color":2}
+```
+
+## Testing using cURL
+
+
+For quick testing of the lua-resty-grpc-gateway once it is up and running
+
+GET
+
+Given the following proto file
+
+```protobuf
+syntax = "proto3";
+
+package helloworld;
+
+import "google/protobuf/timestamp.proto";
+
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+message HelloRequest {
+  string displayName = 1;
+}
+
+message HelloReply {
+  string message = 1;
+  google.protobuf.Timestamp reply_at = 2;
+}
+```
+
+`curl -vv http://localhost:9000/rest?displayName=gRPCTest`
+
+POST
+
+Given the following proto file
+
+```protobuf
+syntax = "proto3";
+
+package helloworld;
+
+import "google/protobuf/timestamp.proto";
+
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+enum Color {
+  RED = 0;
+  BLUE = 1;
+  GREEN = 2;
+}
+
+message HelloRequest {
+  string displayName = 1;
+  repeated ComplexMsg ex = 2; /** Example of nested message type**/
+  repeated string jobs = 3;
+  Color color = 4; /**Example of a enum**/
+}
+
+message ComplexMsg {
+  string displayName = 1;
+  YetAnotherNestedMsg foo = 2;
+}
+
+message YetAnotherNestedMsg {
+  repeated int32 grades = 1;
+}
+
+message HelloReply {
+  string message = 1;
+  google.protobuf.Timestamp reply_at = 2;
+}
+```
+
+`curl -vv -H "Content-Type: application/json" -d '{"displayName":"grpc-rest", "ex":[{"displayName":"test", "foo":{"grades":[1,2,3]}}, {"displayName":"test2","foo":{"grades":[97,98,99]}}], "jobs":["A","B"], "color":"GREEN"}' "http://localhost:9000/rest"`
+
+## Known limitations
+
+The underlying lua-protobuf library is used to encode and decode the lua tables, as such anything that this library does not support consequently this package can not support it either. 
+
+One currently known limitation is the use of annotations/options in the proto files. Specfically inside the `rpc`
 
 ## License
 

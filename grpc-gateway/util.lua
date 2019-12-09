@@ -74,6 +74,9 @@ _M.map_message = function(field, default_values)
 
   local request = {}
   for name, _, field_type,_,lbl in pb.fields(field) do
+    -- Find the actual type of field (enum,message, or map)
+    local _,_, actualType = pb.type(field_type)
+
     if field_type:sub(1, 1) == "." then
       
       -- If a request contains nested messages and make use of the 'repeated' protobuf label we may have to iterate over each inner element 
@@ -87,6 +90,13 @@ _M.map_message = function(field, default_values)
          end
          table.insert(request[name],sub)
        end
+      -- Add support for a enum type, if the default values[name] contains a enum value that is non-existant in the enum definition from the proto file we simply ignore it
+      -- Note that enum values can be either string or int from the json that is passed in.
+      elseif actualType == "enum" then
+        local value = pb.enum(field_type,default_values[name])
+        if value ~= nil then
+          request[name] = value
+        end
      else
        sub, err = _M.map_message(field_type, default_values[name] or {})
        if err then

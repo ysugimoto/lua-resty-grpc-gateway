@@ -43,8 +43,8 @@ If grpc-web request sent successfully (maybe it's not due to browser implementat
 gateway container also accepts REST interface:
 
 ```
-curl "http://localhost:9000/rest?name=grpc-rest"
->> {"message":"Hello, grpc-rest!"}
+curl -vv -H "Content-Type: application/json" -d '{"displayName":"grpc-rest", "ex":[{"displayName":"test", "foo":{"grades":[1,2,3]}}, {"displayName":"test2","foo":{"grades":[97,98,99]}}], "jobs":["A","B"], "color":"BLUE"}' "http://localhost:9000/rest"
+>> {"reply_at":{"seconds":1575473082,"nanos":0},"message":"Hello, grpc-rest!"}
 ```
 
 This response is made through the gateway as REST, proxy to backend with gRPC request, and transform to JSON.

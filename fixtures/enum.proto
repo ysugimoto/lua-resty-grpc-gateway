@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package enum;
+
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+enum Color {
+    RED = 0;
+    GREEN =1;
+    BLUE = 2;
+}
+
+
+message HelloRequest {
+  string name = 1;
+  Color color = 2;
+
+}
+
+message Foo {
+  repeated int32 grades = 1;
+}
+
+message Location {
+  string name = 1;
+}
+
+message HelloReply {
+  string message = 1;
+}
