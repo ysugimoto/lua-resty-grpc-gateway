@@ -397,7 +397,7 @@ message HelloRequest {
 }
 
 message ComplexMsg {
-  string displayname = 1;
+  string displayName = 1;
   YetAnotherNestedMsg foo = 2;
 }
 ```
@@ -407,7 +407,7 @@ The corresponding POST request is as follows:
 ```
 POST /
 Content-Type: application/json
-{"ex":[{"displayname":"test", "foo":{"grades":[1,2,3]}}, {"displayname":"test2","foo":{"grades":[97,98,99]}}]}
+{"ex":[{"displayName":"test", "foo":{"grades":[1,2,3]}}, {"displayName":"test2","foo":{"grades":[97,98,99]}}]}
 ```
 
 
@@ -477,7 +477,7 @@ service Greeter {
 }
 
 message HelloRequest {
-  string displayname = 1;
+  string displayName = 1;
 }
 
 message HelloReply {
@@ -486,7 +486,7 @@ message HelloReply {
 }
 ```
 
-`curl -vv http://localhost:9000/rest?displayname=gRPCTest`
+`curl -vv http://localhost:9000/rest?displayName=gRPCTest`
 
 POST
 
@@ -510,14 +510,14 @@ enum Color {
 }
 
 message HelloRequest {
-  string displayname = 1;
+  string displayName = 1;
   repeated ComplexMsg ex = 2; /** Example of nested message type**/
   repeated string jobs = 3;
   Color color = 4; /**Example of a enum**/
 }
 
 message ComplexMsg {
-  string displayname = 1;
+  string displayName = 1;
   YetAnotherNestedMsg foo = 2;
 }
 
@@ -531,7 +531,7 @@ message HelloReply {
 }
 ```
 
-`curl -vv -H "Content-Type: application/json" -d '{"displayname":"grpc-rest", "ex":[{"displayname":"test", "foo":{"grades":[1,2,3]}}, {"displayname":"test2","foo":{"grades":[97,98,99]}}], "jobs":["A","B"], "color":"GREEN"}' "http://localhost:9000/rest"`
+`curl -vv -H "Content-Type: application/json" -d '{"displayName":"grpc-rest", "ex":[{"displayName":"test", "foo":{"grades":[1,2,3]}}, {"displayName":"test2","foo":{"grades":[97,98,99]}}], "jobs":["A","B"], "color":"GREEN"}' "http://localhost:9000/rest"`
 
 ## Known limitations
 

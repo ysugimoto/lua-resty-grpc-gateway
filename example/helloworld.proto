@@ -15,14 +15,14 @@ enum Color {
 }
 
 message HelloRequest {
-  string displayname = 1;
+  string displayName = 1;
   repeated ComplexMsg ex = 2; /** Example of nested message type**/
   repeated string jobs = 3;
   Color color = 4; /**Example of a enum**/
 }
 
 message ComplexMsg {
-  string displayname = 1;
+  string displayName = 1;
   YetAnotherNestedMsg foo = 2;
 }
 
