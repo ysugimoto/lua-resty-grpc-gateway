@@ -29,10 +29,9 @@ _M.new = function(proto_file, ...)
   -- and protoc library should resolve imports automatically.
   _p.include_imports = true
 
-  -- We'd like to load inside pcall due to prevent duplicate load error
-  pcall(function()
-    _p:loadfile(proto_file)
-  end)
+  -- below function may throw error when it fails to load proto file.
+  _p:loadfile(proto_file)
+
   local instance = {}
   instance.get_loaded_proto = function()
     return _p.loaded
