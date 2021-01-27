@@ -21,7 +21,7 @@ _M.new = function(proto)
       return ("Undefined service method: %s/%s"):format(service, method)
     end
 
-    -- Ensure erquest body has been read
+    -- Ensure request body has been read
     ngx.req.read_body()
     -- Create an internal lua table containing the raw userdata which will be used for processing
     local default_values = util.populate_default_values()
