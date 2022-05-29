@@ -4,9 +4,9 @@ import { HelloRequest, HelloReply } from "./helloworld/helloworld_pb"
 
 const client = new GreeterClient("http://localhost:9000", null, null)
 const request = new HelloRequest()
-request.setName("grpc-web with gateway")
+request.setDisplayname("grpc-web with gateway")
 
-client.sayHello(request, {}, (err: grpcWeb.Error, resp: HelloReply) => {
+client.sayHello(request, {}, (err: grpcWeb.RpcError, resp: HelloReply) => {
   if (err) {
     console.error(err.message)
     return

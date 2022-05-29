@@ -1,4 +1,4 @@
-FROM alpine:3.9.3
+FROM alpine:3.16.0
 
 LABEL maintainer="Yoshiaki Sugimoto <sugimoto@wnotes.net>"
 

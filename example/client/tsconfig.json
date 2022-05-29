@@ -5,5 +5,8 @@
     "strict": true,
     "allowJs": true,
     "esModuleInterop": true
-  }
+  },
+  "files": [
+    "main.ts"
+  ]
 }
