@@ -1,20 +1,24 @@
-FROM openresty/openresty:1.15.8.1rc1-xenial
+FROM openresty/openresty:1.21.4.1-0-centos
 
-ARG PROTOC_VERSION="3.11.0"
-
-RUN apt-get update -qq && \
-    apt-get install -y vim telnet git
-
-RUN mkdir -p /var/log/nginx
-RUN mkdir /etc/proto
-COPY ./helloworld.proto /etc/proto/helloworld.proto
+RUN yum install gcc git bsdtar -y
 
 ## install basic google's protobuf files
-RUN cd /opt && \
-    curl -OL https://github.com/google/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip && \
-    unzip -o protoc-${PROTOC_VERSION}-linux-x86_64.zip -d /usr/local/protoc && \
-    find /usr/local/protoc -type d -exec chmod 755 {} \; && \
-    find /usr/local/protoc/include -type f -exec chmod 644 {} \;
+ARG PROTOC_VERSION="21.1"
+ARG TARGETOS
+ARG TARGETARCH
 
-RUN luarocks install lua-resty-grpc-gateway
+# normalize architechture
+RUN case "${TARGETARCH}" in \
+        "amd64" ) DOCKER_ARCH="x86_64"   ;; \
+        "arm/v7") DOCKER_ARCH="arm_hf"   ;; \
+        "arm64" ) DOCKER_ARCH="aarch_64" ;; \
+        *       ) DOCKER_ARCH=""         ;; \
+    esac && \
+    PROTOC=protoc-${PROTOC_VERSION}-${TARGETOS}-${DOCKER_ARCH}.zip && \
+    curl -Ls https://github.com/google/protobuf/releases/download/v${PROTOC_VERSION}/${PROTOC} | \
+    bsdtar -xvf- -C /usr/local/ && \
+    chmod -R 644 /usr/local/include/ && chmod -R 755 /usr/local/bin/
+  
+RUN luarocks install lua-protobuf
 RUN luarocks install serpent
+
