@@ -6,7 +6,11 @@ This is grpc-web gateway example with helloworld.
 
 - Go (gRPC backend app)
 - nodejs (gRPC frontend app)
-- protoc related commands ([protobuf](https://github.com/protocolbuffers/protobuf/releases), [protoc-gen-grpc-web](https://github.com/grpc/grpc-web/releases))
+- protoc related commands:
+  - [protobuf](https://github.com/protocolbuffers/protobuf/releases)
+  - [protoc-gen-grpc-web](https://github.com/grpc/grpc-web/releases)
+  - [protoc-gen-go-grpc](https://github.com/grpc/grpc-go)
+  - [protoc-gen-go](https://github.com/protocolbuffers/protobuf-go)
 - Docker and docker-compose
 
 ## How to build

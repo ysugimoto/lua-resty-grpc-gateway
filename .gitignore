@@ -46,3 +46,4 @@ example/server/pkg
 example/client/node_modules
 example/client/helloworld
 example/google
+tests/luaunit.lua
