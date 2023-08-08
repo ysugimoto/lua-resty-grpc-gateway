@@ -7,20 +7,22 @@ import (
 	"net"
 	"time"
 
-	"github.com/ysugimoto/lua-resty-grpc-gateway/helloworld"
+	pb "github.com/ysugimoto/lua-resty-grpc-gateway/helloworld"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"google.golang.org/grpc"
 )
 
-type Server struct{}
+type Server struct {
+	pb.UnimplementedGreeterServer
+}
 
-func (s *Server) SayHello(ctx context.Context, req *helloworld.HelloRequest) (*helloworld.HelloReply, error) {
+func (s *Server) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.HelloReply, error) {
 	spew.Dump(req)
-	name := req.GetDisplayname()
+	name := req.GetDisplayName()
 	log.Printf("name: %s\n", name)
-	return &helloworld.HelloReply{
+	return &pb.HelloReply{
 		Message: fmt.Sprintf("Hello, %s!", name),
 		ReplyAt: &timestamp.Timestamp{
 			Seconds: time.Now().Unix(),
@@ -36,6 +38,6 @@ func main() {
 	defer conn.Close()
 
 	server := grpc.NewServer()
-	helloworld.RegisterGreeterServer(server, &Server{})
+	pb.RegisterGreeterServer(server, &Server{})
 	server.Serve(conn)
 }

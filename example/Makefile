@@ -1,26 +1,31 @@
-.PHONY: proto all helloworld.proto prepare docker
+DOCKER_COMPOSE ?= docker compose
 
 all: proto server
 
-proto: helloworld.proto
-
 clean:
-	rm server/helloworld/*.go
-	rm client/helloworld/*
+	$(RM) -r server/helloworld
+	$(RM) -r client/helloworld
 
 prepare:
-	if [ ! -d "server/helloworld" ]; then mkdir -p server/helloworld; fi
-	if [ ! -d "client/helloworld" ]; then mkdir -p client/helloworld; fi
+	mkdir -p server/helloworld
+	mkdir -p client/helloworld
 
-helloworld.proto: prepare
-	protoc -I. helloworld.proto \
-		--go_out=plugins=grpc:./server/helloworld \
+proto: helloworld.proto prepare
+	protoc --proto_path=./ $< \
+		--go_out=./server/helloworld \
+		--go_opt=paths=source_relative \
+		--go_opt=M$<=helloworld/ \
+		--go-grpc_out=./server/helloworld \
+		--go-grpc_opt=paths=source_relative \
+		--go-grpc_opt=M$<=helloworld/ \
 		--grpc-web_out=import_style=commonjs+dts,mode=grpcweb:./client/helloworld \
 		--js_out=import_style=commonjs:./client/helloworld
 
 server: proto
 	cd server && \
-		CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o app
+	CGO_ENABLED=0 go build -o app
 
-docker:
-	docker-compose up -d --build
+docker: proto
+	$(DOCKER_COMPOSE) up -d --build
+
+.PHONY: all clean prepare proto server docker
