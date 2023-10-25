@@ -52,8 +52,9 @@ In order to transform from REST to gRPC completely, you need to use three of hoo
 ```lua
 ## 0. prepare proto file import_paths
 init_by_lua_block {
+  -- Define global import paths
   PROTOC_IMPORT_PATHS = {
-    "/usr/local/include"
+    "/usr/local/protoc/include"
   }
 }
 
@@ -102,6 +103,7 @@ server {
       ngx.header["Content-Type"] = "application/json"
     }
 
+    grpc_set_header TE trailers;
     grpc_set_header Content-Type application/grpc;
     grpc_pass localhost:9000;
   }
